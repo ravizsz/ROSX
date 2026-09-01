@@ -1,0 +1,19 @@
+agent:
+  planner: hierarchical
+
+world:
+  scenario: red_cube
+
+navigation:
+  backend: simulated_nav2
+  workspace_bounds:
+    min_x: -5.0
+    max_x: 5.0
+    min_y: -5.0
+    max_y: 5.0
+
+safety:
+  min_goal_confidence: 0.7
+
+instruction: "Go to the red cube."
+

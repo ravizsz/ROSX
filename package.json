@@ -1,0 +1,11 @@
+{
+  "name": "icode-local",
+  "version": "0.1.0",
+  "private": true,
+  "description": "iCode local product runtime",
+  "scripts": {
+    "start": "node static-server.js",
+    "check": "node --check static-server.js && node --check script.js",
+    "test": "node --test tests/icode-server.test.js"
+  }
+}

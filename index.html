@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111817" />
+    <title>iCode — Build in flow</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="auth-shell" id="authShell">
+      <section class="auth-intro">
+        <a class="brand" href="/" aria-label="iCode home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>iCode</a>
+        <div class="auth-copy">
+          <p class="eyebrow">The AI development environment</p>
+          <h1>Describe the software. Watch it take shape.</h1>
+          <p>iCode keeps your project, code, agent history, verification, and preview in one calm workspace.</p>
+        </div>
+        <div class="auth-proof"><span class="pulse"></span> Local-first and private by default</div>
+      </section>
+      <section class="auth-card-wrap">
+        <form class="auth-card" id="authForm">
+          <p class="eyebrow" id="authEyebrow">Welcome to iCode</p>
+          <h2 id="authTitle">Sign in and keep building.</h2>
+          <p class="form-error" id="authError" role="alert"></p>
+          <label>Email <input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com" /></label>
+          <label>Password <input id="authPassword" type="password" autocomplete="current-password" required minlength="8" placeholder="At least 8 characters" /></label>
+          <button class="primary-button" id="authSubmit" type="submit">Sign in <span>→</span></button>
+          <p class="auth-switch" id="authSwitch">New to iCode? <button type="button" id="authMode">Create an account</button></p>
+          <p class="auth-note">Your projects remain in a local, isolated workspace on this machine.</p>
+        </form>
+      </section>
+    </main>
+
+    <main class="app-shell hidden" id="appShell">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button mobile-only" id="toggleExplorer" type="button" aria-label="Toggle project files">☰</button>
+          <a class="brand" href="/" aria-label="iCode home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>iCode</a>
+          <select class="project-select" id="projectSelect" aria-label="Current project"></select>
+          <button class="new-project-button" id="openProjectModal" type="button">New project</button>
+        </div>
+        <div class="topbar-right">
+          <span class="saved-state" id="savedState"><span></span>Saved</span>
+          <button class="email-button" id="logoutButton" type="button" title="Sign out"></button>
+        </div>
+      </header>
+
+      <aside class="explorer" id="explorer">
+        <div class="pane-title"><span>Project files</span><div><button class="small-icon" id="newFileButton" type="button" title="New file">＋</button><button class="small-icon" id="refreshFiles" type="button" title="Refresh files">↻</button></div></div>
+        <div class="project-meta"><strong id="projectName">Project</strong><span id="projectDescription">Your local workspace</span></div>
+        <nav class="file-tree" id="fileTree" aria-label="Project files"></nav>
+        <div class="explorer-bottom">
+          <button class="side-action active" data-side-tab="changes" type="button"><span>◒</span> Changes <b id="changeCount">0</b></button>
+          <button class="side-action" data-side-tab="history" type="button"><span>↶</span> History</button>
+          <p>Workspace is isolated</p>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <section class="code-pane" aria-label="Code editor">
+          <div class="tabs" id="tabs"></div>
+          <div class="editor-header">
+            <div class="breadcrumbs" id="breadcrumbs">Select a file to begin</div>
+            <div class="editor-tools"><button id="saveButton" type="button">Save <kbd>Ctrl S</kbd></button><button id="deleteFileButton" type="button" title="Delete current file">Delete</button></div>
+          </div>
+          <div class="editor-empty" id="editorEmpty">
+            <span class="empty-orbit">⌘</span>
+            <h2>Your code lives here.</h2>
+            <p>Pick a file, create one, or ask iCode to build your first screen.</p>
+          </div>
+          <div class="editor-area hidden" id="editorArea">
+            <pre class="line-numbers" id="lineNumbers" aria-hidden="true"></pre>
+            <textarea id="codeEditor" aria-label="Code editor" spellcheck="false"></textarea>
+          </div>
+          <footer class="editor-status"><span id="syntaxStatus">Ready</span><span id="cursorStatus">Ln 1, Col 1</span><span id="fileLanguage">Plain text</span></footer>
+        </section>
+
+        <aside class="agent-pane">
+          <div class="agent-header">
+            <div><span class="agent-dot"></span><strong>iCode agent</strong></div>
+            <button class="small-icon" id="clearChat" type="button" title="Clear visible chat">⌫</button>
+          </div>
+          <div class="agent-context"><span class="model-chip">Local builder</span><span>Tools are logged · changes are reversible</span></div>
+          <div class="chat-log" id="chatLog" aria-live="polite"></div>
+          <form class="prompt-box" id="promptForm">
+            <textarea id="promptInput" rows="3" placeholder="Describe what you want to build…" aria-label="Message iCode"></textarea>
+            <div><span>⌘ Enter to run</span><button class="send-button" id="runAgentButton" type="submit">Build <span>↑</span></button></div>
+          </form>
+        </aside>
+
+        <section class="bottom-pane">
+          <div class="bottom-tabs">
+            <button class="bottom-tab active" data-bottom-tab="console" type="button">Console <span id="consoleBadge">0</span></button>
+            <button class="bottom-tab" data-bottom-tab="changes" type="button">Changes</button>
+            <button class="bottom-tab" data-bottom-tab="history" type="button">History</button>
+            <span></span>
+            <button class="preview-button" id="togglePreviewButton" type="button">Preview</button>
+          </div>
+          <div class="bottom-content" id="consoleContent">
+            <div class="terminal-intro">Sandbox permits verification commands only. Nothing is fabricated.</div>
+            <div class="terminal-output" id="terminalOutput"></div>
+            <form class="terminal-form" id="terminalForm"><span>project <b>›</b></span><select id="commandSelect" aria-label="Safe command"><option value="check">check project</option><option value="build">build check</option><option value="test">test check</option></select><button type="submit">Run</button></form>
+          </div>
+          <div class="bottom-content hidden" id="changesContent"></div>
+          <div class="bottom-content hidden" id="historyContent"></div>
+        </section>
+      </section>
+
+      <aside class="preview-pane" id="previewPane">
+        <div class="preview-header"><div><span class="preview-light"></span><strong>Live preview</strong></div><div><button class="small-icon" id="refreshPreview" type="button" title="Refresh preview">↻</button><button class="small-icon" id="closePreview" type="button" title="Close preview">×</button></div></div>
+        <div class="preview-address">localhost <span id="previewPath">/</span></div>
+        <iframe id="previewFrame" title="Project preview" sandbox="allow-scripts"></iframe>
+        <div class="preview-empty" id="previewEmpty">Create a project to start a secure live preview.</div>
+      </aside>
+
+      <footer class="statusbar"><div><span class="status-online"></span> iCode local server</div><div id="activityStatus">Ready</div></footer>
+    </main>
+
+    <div class="modal-backdrop hidden" id="projectModal">
+      <form class="modal" id="projectForm">
+        <button class="modal-close" id="closeProjectModal" type="button" aria-label="Close">×</button>
+        <p class="eyebrow">New workspace</p>
+        <h2>Start with a clean project.</h2>
+        <p>A safe starter is created first. Then iCode can inspect and change real files.</p>
+        <label>Project name <input id="newProjectName" required minlength="2" maxlength="70" placeholder="Acme Studio" /></label>
+        <label>Description <input id="newProjectDescription" maxlength="240" placeholder="What are you building?" /></label>
+        <p class="form-error" id="projectError" role="alert"></p>
+        <button class="primary-button" type="submit">Create project <span>→</span></button>
+      </form>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="script.js"></script>
+  </body>
+</html>

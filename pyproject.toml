@@ -1,0 +1,23 @@
+[project]
+name = "rosx"
+version = "0.1.0"
+description = "ROSX embodied AI robot operating system foundation."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+api = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.27",
+]
+dev = [
+  "pytest>=8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["ai", "."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

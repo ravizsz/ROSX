@@ -1,0 +1,5 @@
+-- iCode local persistence schema.
+-- The executable migration is intentionally embedded in static-server.js so
+-- the zero-dependency local server can bootstrap itself.
+-- Tables: users, sessions, projects, project_files, conversations, messages,
+-- agent_runs, tool_calls, project_versions, deployments, usage, settings.
