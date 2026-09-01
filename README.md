@@ -1,53 +1,64 @@
-# iCode
+# ROSX
 
-An AI-native, local-first coding workspace: create a project, describe what you
-want, review actual file changes, run a real verification command, inspect the
-preview, and restore a previous project version.
+ROSX is an AI-native embodied robotics platform foundation. The first milestone is a
+simulation-first loop for:
 
-## Run locally
+```text
+Human: "Go to the red cube."
+Parser -> Planner -> World Model -> Safety -> Navigation Skill -> Simulated Nav2 Adapter
+```
 
-This runtime has no external package dependency.
+This repository intentionally starts with narrow, tested behavior rather than pretending
+to be a complete robot operating system.
 
-~~~powershell
-node static-server.js
-~~~
+## Current Milestone
 
-Then open `http://127.0.0.1:5173`. Create a local account, create a project,
-and send an instruction such as `Build a SaaS dashboard with a dark mode`.
+Implemented:
 
-## What is implemented
+- Provider-independent AI/runtime boundaries.
+- A typed world model with entities, locations, relationships, and confidence.
+- A hierarchical planner for the first navigation task.
+- A skill registry and a `navigate_to` skill.
+- A safety policy gate before motion.
+- A deterministic simulated navigation adapter with feedback events.
+- A FastAPI entrypoint skeleton for future web control.
+- A ROS 2 Jazzy workspace skeleton for future package integration.
+- Unit tests covering the complete MVP loop and key failure behavior.
 
-- Local email/password sessions with scrypt password hashes, HTTP-only cookies,
-  SameSite policy, CSRF protection, rate-limited sign-in, and server-side
-  project authorization.
-- SQLite persistence for users, projects, file metadata, conversations,
-  messages, agent runs, tool calls, versions, deployments, usage, and settings.
-- Per-project workspaces behind path-traversal and secret-file protections.
-- A local agent loop that inspects files, snapshots the project, writes files,
-  runs a real `node --check` verification, records every tool call, retries a
-  syntax repair when needed, and stores an after-version.
-- Real editor saves, file creation/deletion, authenticated live preview, safe
-  build/test/check controls, change review, and version restore.
+Not yet implemented:
 
-The built-in provider is deliberately deterministic and tool-backed so the
-product works without an API key. Provider-specific model execution can be
-added behind the agent boundary without giving a model direct filesystem or
-terminal access.
+- Real Nav2 action client bindings.
+- Gazebo or Isaac Sim launch files.
+- MoveIt 2 manipulation.
+- Persistent PostgreSQL memory.
+- Next.js dashboard.
 
-## Verify
+## Run Tests
 
-~~~powershell
-node --check static-server.js
-node --check script.js
-node --test tests/icode-server.test.js
-~~~
+```bash
+python -m pytest
+```
 
-The end-to-end test creates an isolated temporary database and verifies account
-creation, project creation, an agent build, file persistence, verification,
-history, preview authorization, and path traversal rejection.
+## Run the MVP Example
 
-## Local data
+```bash
+python examples/run_red_cube.py
+```
 
-The running app keeps its database and project workspaces in `.icode-data/`,
-which is intentionally gitignored. The existing ROSX research files that were
-already in this repository remain untouched.
+Expected result: a completed task trace showing the planner selecting `navigate_to`,
+the world model resolving `red_cube`, the safety layer approving the goal, and the
+simulated navigation adapter reaching the cube location.
+
+## Repository Layout
+
+```text
+apps/api/                 FastAPI control API skeleton
+ai/rosx_ai/               AI runtime, planner, world model, skills, simulation
+robotics/ros_ws/src/      ROS 2 workspace/package skeletons
+robotics/simulation/      Simulation scenario notes and future launch assets
+configs/                  Experiment and runtime configuration
+docs/                     Architecture and roadmap
+examples/                 Runnable examples
+tests/                    Unit and integration tests
+```
+
